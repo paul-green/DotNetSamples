@@ -32,7 +32,7 @@ namespace DataGridClicketyClick
 
             foreach (int i in Enumerable.Range(0, 9))
             {
-                table.Rows.Add(3000 + i, 100 + i, 50000 + i);
+                table.Rows.Add(i, 100 + i, 100 + i);
             }
             this.DataContext = this;
         }
@@ -58,7 +58,24 @@ namespace DataGridClicketyClick
             {
                 BindingExpression binding = textBlock.GetBindingExpression(TextBlock.TextProperty);
                 DataRowView rowView = ((System.Data.DataRowView)binding.DataItem);
-                Console.WriteLine(string.Format("Clicked on {0}={1}\r\n\tRow Values={2}",  binding.ParentBinding.Path.Path, textBlock.Text, string.Join(",", rowView.Row.ItemArray)));
+                
+                string path = binding.ParentBinding.Path.Path;
+                Console.WriteLine(string.Format("Clicked on {0}={1}\r\n\tRow Values={2}",  path, textBlock.Text, string.Join(",", rowView.Row.ItemArray)));
+                string columnName = path.Substring(1, path.Length - 2);
+                bool match = false;
+                double total = 0;
+                foreach (DataRowView drv in rowView.DataView)
+                {
+
+                    match |= object.ReferenceEquals(drv, rowView);
+                    if (match)
+                    {
+                        total += (double)drv[columnName];
+                        //Console.WriteLine("Match ? {0}={1} {2}", drv[0], rowView[0], match);
+                    }
+                }
+
+                Console.WriteLine("Total below {0}-{1} = {2}", columnName, textBlock.Text, total);
 
             }
         }
